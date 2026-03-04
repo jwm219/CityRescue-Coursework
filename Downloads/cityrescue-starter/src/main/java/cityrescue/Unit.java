@@ -4,6 +4,7 @@ import cityrescue.enums.UnitType;
 import cityrescue.enums.UnitStatus;
 import cityrescue.enums.IncidentType;
 
+//base class for all rescue units
 public abstract class Unit {
     protected int unitId;
     protected UnitType type;
@@ -14,6 +15,7 @@ public abstract class Unit {
     protected int assignedIncidentId;
     protected int ticksWorkedAtScene;
 
+    //sets up unit with starting position. defaukt status IDLE
     public Unit(int unitId, UnitType type, int homeStationId, int startX, int startY) {
         this.unitId = unitId;
         this.type = type;
@@ -25,14 +27,19 @@ public abstract class Unit {
         this.ticksWorkedAtScene = 0;
     }
 
+    //subclass defines what incident type they handle
     public abstract boolean canHandleIncidentType(IncidentType incidentType);
+
+    //subclass defines time taken to resolve incident
     public abstract int getTicksToResolve();
 
+    //move unit one step closer to target
     public void moveTowards(int targetX, int targetY, CityMap map) {
         int[] dx = {0, 1, 0, -1};
         int[] dy = {-1, 0, 1, 0};
         int currentDist = map.manhattanDistance(currentX, currentY, targetX, targetY);
 
+        //try move closer if possible
         for (int i = 0; i < 4; i++) {
             int newX = currentX + dx[i];
             int newY = currentY + dy[i];
@@ -42,6 +49,8 @@ public abstract class Unit {
                 }
             }
         }
+
+        //if move closer not possible, move to any valid adjacent space
         for (int i = 0; i < 4; i++) {
             int newX = currentX + dx[i];
             int newY = currentY + dy[i];
@@ -51,6 +60,7 @@ public abstract class Unit {
         }
     }
 
+    //getters and setters
     public int        getUnitId()                       { return unitId; }
     public UnitType   getType()                         { return type; }
     public int        getHomeStationId()                { return homeStationId; }
