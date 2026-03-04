@@ -1,0 +1,54 @@
+{
+  "tests": [
+    {
+      "name": "Build (compiles)",
+      "setup": "",
+      "run": "mvn -q -DskipTests package",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 10,
+      "points": 5
+    },
+    {
+      "name": "Public Tests: Basics",
+      "setup": "",
+      "run": "mvn -q -Dtest=PublicBasicsTest test",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 10,
+      "points": 10
+    },
+    {
+      "name": "Public Tests: Dispatch",
+      "setup": "",
+      "run": "mvn -q -Dtest=PublicDispatchTest test",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 10,
+      "points": 10
+    },
+    {
+      "name": "Public Tests: Tick + Lifecycle",
+      "setup": "",
+      "run": "mvn -q -Dtest=PublicTickLifecycleTest test",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 10,
+      "points": 10
+    },
+    {
+      "name": "Public Tests: Output Format",
+      "setup": "",
+      "run": "mvn -q -Dtest=PublicOutputFormatTest test",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 10,
+      "points": 5
+    }
+  ]
+}
