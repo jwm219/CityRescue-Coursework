@@ -4,8 +4,8 @@ import cityrescue.enums.*;
 import cityrescue.exceptions.*;
 
 /**
- * CityRescueImpl — full implementation of the CityRescue interface.
- * Manages the city map, stations, units, incidents, and simulation tick.
+ * This file is a full implementation of the CityRescue interface.
+ * It manages the city map, stations, units, incidents,also tick of the simulation
  */
 public class CityRescueImpl implements CityRescue {
 
