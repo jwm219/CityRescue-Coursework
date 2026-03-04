@@ -268,7 +268,7 @@ public class CityRescueImpl implements CityRescue {
         int[] sortedUnitIndices     = getSortedUnitIndices();
         int[] sortedIncidentIndices = getSortedIncidentIndices();
 
-        // Step 1: move EN_ROUTE units ascending unitId
+        // move EN_ROUTE units by ascending based on unitId
         for (int i = 0; i < unitCount; i++) {
             Unit unit = units[sortedUnitIndices[i]];
             if (unit.getStatus() != UnitStatus.EN_ROUTE) continue;
@@ -276,7 +276,7 @@ public class CityRescueImpl implements CityRescue {
             unit.moveTowards(target.getX(), target.getY(), cityMap);
         }
 
-        // Step 2: mark arrivals ascending unitId
+        //mark arrivals by ascending based on unitId
         for (int i = 0; i < unitCount; i++) {
             Unit unit = units[sortedUnitIndices[i]];
             if (unit.getStatus() != UnitStatus.EN_ROUTE) continue;
@@ -288,14 +288,14 @@ public class CityRescueImpl implements CityRescue {
             }
         }
 
-        // Step 3: increment on-scene work ascending unitId
+        // This increments on-scene work by ascending through unitId
         for (int i = 0; i < unitCount; i++) {
             Unit unit = units[sortedUnitIndices[i]];
             if (unit.getStatus() == UnitStatus.AT_SCENE)
                 unit.setTicksWorkedAtScene(unit.getTicksWorkedAtScene() + 1);
         }
 
-        // Step 4: resolve completed incidents ascending incidentId
+        // resolve completed incidents by ascending incidentId
         for (int i = 0; i < incidentCount; i++) {
             Incident incident = incidents[sortedIncidentIndices[i]];
             if (incident.getStatus() != IncidentStatus.IN_PROGRESS) continue;
@@ -356,11 +356,6 @@ public class CityRescueImpl implements CityRescue {
     }
 
 
-
-    // =========================================================================
-    // Lookup helpers
-    // =========================================================================
-
     private int findStationIndex(int stationId) {
         for (int i = 0; i < stationCount; i++)
             if (stations[i].getStationId() == stationId) return i;
@@ -378,10 +373,6 @@ public class CityRescueImpl implements CityRescue {
             if (incidents[i].getIncidentId() == incidentId) return i;
         return -1;
     }
-
-    // =========================================================================
-    // Sorting helpers — insertion sort, no Collections allowed
-    // =========================================================================
 
     private int[] getSortedUnitIndices() {
         int[] indices = new int[unitCount];
@@ -416,10 +407,6 @@ public class CityRescueImpl implements CityRescue {
             arr[j + 1] = key;
         }
     }
-
-    // =========================================================================
-    // Dispatch helper
-    // =========================================================================
 
     private Unit findBestUnit(Incident incident) {
         Unit bestUnit = null;
