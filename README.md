@@ -1,4 +1,1 @@
-"# Othello-project" 
-"# Othello-project" 
-"# Othello-project" 
-"# Othello-project" 
+Work was completed locally on one machine in person, then uploaded onto a private repository. We didnt realise github classroom was a necessity until near deadline. Tests were run locally via maven on the device as the code was written.
