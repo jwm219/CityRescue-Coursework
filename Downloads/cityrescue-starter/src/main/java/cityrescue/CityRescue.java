@@ -4,17 +4,19 @@ import cityrescue.enums.*;
 import cityrescue.exceptions.*;
 
 public interface CityRescue {
+    //grid setup with obstacles
     void initialise(int width, int height) throws InvalidGridException;
     int[] getGridSize();
-
     void addObstacle(int x, int y) throws InvalidLocationException;
     void removeObstacle(int x, int y) throws InvalidLocationException;
 
+    //manage stations
     int addStation(String name, int x, int y) throws InvalidNameException, InvalidLocationException;
     void removeStation(int stationId) throws IDNotRecognisedException, IllegalStateException;
     void setStationCapacity(int stationId, int maxUnits) throws IDNotRecognisedException, InvalidCapacityException;
     int[] getStationIds();
 
+    //manage units
     int addUnit(int stationId, UnitType type) throws IDNotRecognisedException, InvalidUnitException, IllegalStateException;
     void decommissionUnit(int unitId) throws IDNotRecognisedException, IllegalStateException;
     void transferUnit(int unitId, int newStationId) throws IDNotRecognisedException, IllegalStateException;
@@ -22,12 +24,14 @@ public interface CityRescue {
     int[] getUnitIds();
     String viewUnit(int unitId) throws IDNotRecognisedException;
 
+    //manage incidents
     int reportIncident(IncidentType type, int severity, int x, int y) throws InvalidSeverityException, InvalidLocationException;
     void cancelIncident(int incidentId) throws IDNotRecognisedException, IllegalStateException;
     void escalateIncident(int incidentId, int newSeverity) throws IDNotRecognisedException, InvalidSeverityException, IllegalStateException;
     int[] getIncidentIds();
     String viewIncident(int incidentId) throws IDNotRecognisedException;
 
+    //control simulation
     void dispatch();
     void tick();
     String getStatus();
