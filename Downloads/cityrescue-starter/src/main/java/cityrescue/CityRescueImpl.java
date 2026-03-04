@@ -331,12 +331,6 @@ public class CityRescueImpl implements CityRescue {
         return sb.toString();
     }
 
-
-
-    // =========================================================================
-    // Formatting helpers
-    // =========================================================================
-
              private String formatIncident(Incident incident) {
         String unitStr = incident.getAssignedUnitId() == -1 ? "-"
                        : String.valueOf(incident.getAssignedUnitId());
