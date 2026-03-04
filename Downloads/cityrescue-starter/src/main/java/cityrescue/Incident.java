@@ -4,7 +4,7 @@ package cityrescue;
 import cityrescue.enums.IncidentType;
 import cityrescue.enums.IncidentStatus;
 
-
+//represents incident in the system
 public class Incident {
     private int incidentId;
     private IncidentType type;
@@ -14,6 +14,7 @@ public class Incident {
     private IncidentStatus status;
     private int assignedUnitId;
 
+    //creates new incident. default status = REPORTED
     public Incident(int incidentId, IncidentType type, int severity, int x, int y) {
         this.incidentId = incidentId;
         this.type = type;
@@ -24,6 +25,7 @@ public class Incident {
         this.assignedUnitId = -1;
     }
 
+    //getters and setters
     public int            getIncidentId()               { return incidentId; }
     public IncidentType   getType()                     { return type; }
     public int            getSeverity()                 { return severity; }
