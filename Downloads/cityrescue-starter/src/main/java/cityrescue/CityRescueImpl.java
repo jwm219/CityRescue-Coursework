@@ -3,30 +3,32 @@ package cityrescue;
 import cityrescue.enums.*;
 import cityrescue.exceptions.*;
 
-/**
- * This file is a full implementation of the CityRescue interface.
- * It manages the city map, stations, units, incidents,also tick of the simulation
- */
+//this file is a full implmentation of the city rescue interface it manages the city map, stations, units, incidents and ticks of the simulation
 public class CityRescueImpl implements CityRescue {
 
+    //system limits
     private static final int MAX_STATIONS  = 20;
     private static final int MAX_UNITS     = 50;
     private static final int MAX_INCIDENTS = 200;
 
+    //stores core data
     private CityMap    cityMap;
     private Station[]  stations;
     private Unit[]     units;
     private Incident[] incidents;
 
+    //counters
     private int stationCount;
     private int unitCount;
     private int incidentCount;
 
+    //id trackers
     private int nextStationId;
     private int nextUnitId;
     private int nextIncidentId;
     private int currentTick;
 
+    //resets simulation
     @Override
     public void initialise(int width, int height) throws InvalidGridException {
         if (width <= 0 || height <= 0)
@@ -44,11 +46,13 @@ public class CityRescueImpl implements CityRescue {
         currentTick    = 0;
     }
 
+    //return grid size
     @Override
     public int[] getGridSize() {
         return new int[]{cityMap.getWidth(), cityMap.getHeight()};
     }
 
+    //addblocked locations on map
     @Override
     public void addObstacle(int x, int y) throws InvalidLocationException {
         if (!cityMap.isInBounds(x, y))
@@ -56,6 +60,7 @@ public class CityRescueImpl implements CityRescue {
         cityMap.setBlocked(x, y, true);
     }
 
+    //remove blocked locations on map
     @Override
     public void removeObstacle(int x, int y) throws InvalidLocationException {
         if (!cityMap.isInBounds(x, y))
@@ -63,6 +68,7 @@ public class CityRescueImpl implements CityRescue {
         cityMap.setBlocked(x, y, false);
     }
 
+    //create and store new station
     @Override
     public int addStation(String name, int x, int y) throws InvalidNameException, InvalidLocationException {
         if (name == null || name.trim().isEmpty())
@@ -78,6 +84,7 @@ public class CityRescueImpl implements CityRescue {
         return station.getStationId();
     }
 
+    //removes empty stations
     @Override
     public void removeStation(int stationId) throws IDNotRecognisedException, IllegalStateException {
         int idx = findStationIndex(stationId);
@@ -89,6 +96,7 @@ public class CityRescueImpl implements CityRescue {
         stations[--stationCount] = null;
     }
 
+    //updates station capacity
     @Override
     public void setStationCapacity(int stationId, int maxUnits) throws IDNotRecognisedException, InvalidCapacityException {
         int idx = findStationIndex(stationId);
@@ -98,6 +106,7 @@ public class CityRescueImpl implements CityRescue {
         stations[idx].setMaxCapacity(maxUnits);
     }
 
+    //return sorted stationID
     @Override
     public int[] getStationIds() {
         int[] ids = new int[stationCount];
@@ -107,6 +116,7 @@ public class CityRescueImpl implements CityRescue {
         return ids;
     }
 
+    //add new station unit
     @Override
     public int addUnit(int stationId, UnitType type) throws IDNotRecognisedException, InvalidUnitException, IllegalStateException {
         int sIdx = findStationIndex(stationId);
@@ -123,6 +133,7 @@ public class CityRescueImpl implements CityRescue {
         return unit.getUnitId();
     }
 
+    //remove inactive units
     @Override
     public void decommissionUnit(int unitId) throws IDNotRecognisedException, IllegalStateException {
         int uIdx = findUnitIndex(unitId);
@@ -137,6 +148,7 @@ public class CityRescueImpl implements CityRescue {
         units[--unitCount] = null;
     }
 
+    //tranfser idle units to new station
     @Override
     public void transferUnit(int unitId, int newStationId) throws IDNotRecognisedException, IllegalStateException {
         int uIdx = findUnitIndex(unitId);
@@ -157,6 +169,7 @@ public class CityRescueImpl implements CityRescue {
         dest.incrementUnitCount();
     }
 
+    //mark unit as in/out of service
     @Override
     public void setUnitOutOfService(int unitId, boolean outOfService) throws IDNotRecognisedException, IllegalStateException {
         int uIdx = findUnitIndex(unitId);
@@ -167,6 +180,7 @@ public class CityRescueImpl implements CityRescue {
         unit.setStatus(outOfService ? UnitStatus.OUT_OF_SERVICE : UnitStatus.IDLE);
     }
 
+    //return sorted unit ID
     @Override
     public int[] getUnitIds() {
         int[] ids = new int[unitCount];
@@ -176,6 +190,7 @@ public class CityRescueImpl implements CityRescue {
         return ids;
     }
 
+    //return unit details
     @Override
     public String viewUnit(int unitId) throws IDNotRecognisedException {
         int uIdx = findUnitIndex(unitId);
@@ -183,6 +198,7 @@ public class CityRescueImpl implements CityRescue {
         return formatUnit(units[uIdx]);
     }
 
+    //reports new incident
     @Override
     public int reportIncident(IncidentType type, int severity, int x, int y) throws InvalidSeverityException, InvalidLocationException {
         if (type == null)
@@ -200,6 +216,7 @@ public class CityRescueImpl implements CityRescue {
         return incident.getIncidentId();
     }
 
+    //cancels incident. assigned unit now free
     @Override
     public void cancelIncident(int incidentId) throws IDNotRecognisedException, IllegalStateException {
         int iIdx = findIncidentIndex(incidentId);
@@ -219,6 +236,7 @@ public class CityRescueImpl implements CityRescue {
         incident.setAssignedUnitId(-1);
     }
 
+    //change severity of active incident
     @Override
     public void escalateIncident(int incidentId, int newSeverity) throws IDNotRecognisedException, InvalidSeverityException, IllegalStateException {
         int iIdx = findIncidentIndex(incidentId);
@@ -231,6 +249,7 @@ public class CityRescueImpl implements CityRescue {
         incidents[iIdx].setSeverity(newSeverity);
     }
 
+    //returns sorted incident ID
     @Override
     public int[] getIncidentIds() {
         int[] ids = new int[incidentCount];
@@ -240,6 +259,7 @@ public class CityRescueImpl implements CityRescue {
         return ids;
     }
 
+    //returns formated incident details
     @Override
     public String viewIncident(int incidentId) throws IDNotRecognisedException {
         int iIdx = findIncidentIndex(incidentId);
@@ -247,6 +267,7 @@ public class CityRescueImpl implements CityRescue {
         return formatIncident(incidents[iIdx]);
     }
 
+    //dispatches best available unit
     @Override
     public void dispatch() {
         int[] sortedIncidentIndices = getSortedIncidentIndices();
@@ -262,13 +283,14 @@ public class CityRescueImpl implements CityRescue {
         }
     }
 
+    //advances sim by 1 tick
     @Override
     public void tick() {
         currentTick++;
         int[] sortedUnitIndices     = getSortedUnitIndices();
         int[] sortedIncidentIndices = getSortedIncidentIndices();
 
-        // move EN_ROUTE units by ascending based on unitId
+        //moves units towards their targets
         for (int i = 0; i < unitCount; i++) {
             Unit unit = units[sortedUnitIndices[i]];
             if (unit.getStatus() != UnitStatus.EN_ROUTE) continue;
@@ -276,7 +298,7 @@ public class CityRescueImpl implements CityRescue {
             unit.moveTowards(target.getX(), target.getY(), cityMap);
         }
 
-        //mark arrivals by ascending based on unitId
+        //checks if units arrived and updates stautuses
         for (int i = 0; i < unitCount; i++) {
             Unit unit = units[sortedUnitIndices[i]];
             if (unit.getStatus() != UnitStatus.EN_ROUTE) continue;
@@ -288,14 +310,14 @@ public class CityRescueImpl implements CityRescue {
             }
         }
 
-        // This increments on-scene work by ascending through unitId
+        //adds work time for units at a scene
         for (int i = 0; i < unitCount; i++) {
             Unit unit = units[sortedUnitIndices[i]];
             if (unit.getStatus() == UnitStatus.AT_SCENE)
                 unit.setTicksWorkedAtScene(unit.getTicksWorkedAtScene() + 1);
         }
 
-        // resolve completed incidents by ascending incidentId
+        //resolve completed incidents by ascending incidentId
         for (int i = 0; i < incidentCount; i++) {
             Incident incident = incidents[sortedIncidentIndices[i]];
             if (incident.getStatus() != IncidentStatus.IN_PROGRESS) continue;
@@ -311,6 +333,7 @@ public class CityRescueImpl implements CityRescue {
         }
     }
 
+            //system summary
             @Override
     public String getStatus() {
         StringBuilder sb = new StringBuilder();
@@ -331,6 +354,7 @@ public class CityRescueImpl implements CityRescue {
         return sb.toString();
     }
 
+            //format incident to readable string
              private String formatIncident(Incident incident) {
         String unitStr = incident.getAssignedUnitId() == -1 ? "-"
                        : String.valueOf(incident.getAssignedUnitId());
@@ -341,6 +365,7 @@ public class CityRescueImpl implements CityRescue {
             incident.getX(), incident.getY(), statusStr, unitStr);
     }
 
+    //format unit to readable string
     private String formatUnit(Unit unit) {
         String incidentStr = unit.getAssignedIncidentId() == -1 ? "-"
                            : String.valueOf(unit.getAssignedIncidentId());
@@ -356,24 +381,28 @@ public class CityRescueImpl implements CityRescue {
     }
 
 
+    //find station index by id
     private int findStationIndex(int stationId) {
         for (int i = 0; i < stationCount; i++)
             if (stations[i].getStationId() == stationId) return i;
         return -1;
     }
 
+    //find unit index by id
     private int findUnitIndex(int unitId) {
         for (int i = 0; i < unitCount; i++)
             if (units[i].getUnitId() == unitId) return i;
         return -1;
     }
 
+    //find incident index by id
     private int findIncidentIndex(int incidentId) {
         for (int i = 0; i < incidentCount; i++)
             if (incidents[i].getIncidentId() == incidentId) return i;
         return -1;
     }
 
+    //returns unit indices sorted by id
     private int[] getSortedUnitIndices() {
         int[] indices = new int[unitCount];
         for (int i = 0; i < unitCount; i++) indices[i] = i;
@@ -387,6 +416,7 @@ public class CityRescueImpl implements CityRescue {
         return indices;
     }
 
+    //returns incident indices sortedd by id
     private int[] getSortedIncidentIndices() {
         int[] indices = new int[incidentCount];
         for (int i = 0; i < incidentCount; i++) indices[i] = i;
@@ -400,6 +430,7 @@ public class CityRescueImpl implements CityRescue {
         return indices;
     }
 
+    //insert sort for array
     private void sortAscending(int[] arr) {
         for (int i = 1; i < arr.length; i++) {
             int key = arr[i]; int j = i - 1;
@@ -408,6 +439,7 @@ public class CityRescueImpl implements CityRescue {
         }
     }
 
+    //finds closest available correct unit for incident
     private Unit findBestUnit(Incident incident) {
         Unit bestUnit = null;
         int bestDist = Integer.MAX_VALUE;
@@ -429,6 +461,7 @@ public class CityRescueImpl implements CityRescue {
                 return bestUnit;
     }
 
+    //factory method that creates the correct unit type
     private Unit createUnit(int unitId, UnitType type, int homeStationId, int x, int y) {
         switch (type) {
             case AMBULANCE:   return new Ambulance(unitId, homeStationId, x, y);
