@@ -1,5 +1,6 @@
 package cityrescue;
 
+//represents rescue station that holds units
 public class Station {
     private int stationId;
     private String name;
@@ -8,6 +9,7 @@ public class Station {
     private int maxCapacity;
     private int currentUnitCount;
 
+    //creates a station. default capacity unlimted
     public Station(int stationId, String name, int x, int y) {
         this.stationId = stationId;
         this.name = name;
@@ -17,10 +19,14 @@ public class Station {
         this.currentUnitCount = 0;
     }
 
+    //checks if station can accept more units
     public boolean hasCapacity() { return currentUnitCount < maxCapacity; }
+
+    //updates number of units at station
     public void incrementUnitCount() { currentUnitCount++; }
     public void decrementUnitCount() { currentUnitCount--; }
 
+    //getters and setters
     public int    getStationId()        { return stationId; }
     public String getName()             { return name; }
     public int    getX()                { return x; }
